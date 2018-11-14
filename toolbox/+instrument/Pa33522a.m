@@ -3,7 +3,6 @@ classdef Pa33522a < instrument.Protocol
     %   Pa33522a: agilent33500 series
     %   transmission protocol: +instrument/Protocol
     %% Index
-    %   open/close/delete
     %   @read(channel)(freq / amp / period)
     %   @set(channel,value)(freq / amp / period)
     %% Comments
@@ -14,28 +13,6 @@ classdef Pa33522a < instrument.Protocol
         %% Connect
         function a33522a = Pa33522a(address)
             a33522a = a33522a@instrument.Protocol(address);
-        end
-        
-        %% open/close/delete
-        function open(instr)
-            if instr.isopened
-                return;
-            end
-            fopen(instr.handle);
-            instr.isopened=1;
-            
-        end
-        function close(instr)
-            if instr.isopened
-                fclose(instr.handle);
-                instr.isopened=0;
-            end
-        end
-        function delete(instr)
-            if instr.isopened
-                instr.close();
-            end
-            delete(instr.handle);
         end
         
         %% @read(channel)(freq / amp / period)

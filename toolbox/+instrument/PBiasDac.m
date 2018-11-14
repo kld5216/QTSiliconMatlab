@@ -3,7 +3,6 @@ classdef PBiasDac< instrument.Protocol
     %   PBiasDac£ºitek
     %   transmission protocol: +instrument/Protocol
     %% Index
-    %   open/close/delete
     %   @read(channel)(volt)
     %   @set(channel,value)(volt)
     %% Comments
@@ -16,28 +15,6 @@ classdef PBiasDac< instrument.Protocol
         function itek = PBiasDac(address)
             itek = itek@instrument.Protocol(address);
             itek.handle.Terminator=13;
-        end
-        
-        %% open/close/delete
-        function open(itek)
-            if itek.isopened
-                return;
-            end
-            fopen(itek.handle);
-            itek.isopened=1;
-            
-        end
-        function close(itek)
-            if itek.isopened
-                fclose(itek.handle);
-                itek.isopened=0;
-            end
-        end
-        function delete(itek)
-            if itek.isopened
-                itek.close();
-            end
-            delete(itek.handle);
         end
         
         %% @read(channel)(volt)
