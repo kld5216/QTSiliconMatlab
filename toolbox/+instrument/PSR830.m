@@ -13,7 +13,23 @@ classdef PSR830 < instrument.Protocol
     %
     %   value: read_input_mode: 0:I 1:V
     
-    %%
+    %% properties
+%     properties
+%         stepAux=0.03;
+%         delayAux=0.05;
+%         stepAmp=0.02;
+%         delayAmp=0.03;
+%         stepFreq=10;
+%         delayFreq=0.03;
+%         
+%         resetStepAux=0.05;
+%         resetDelayAux=0.05;
+%         resetStepFreq=10;
+%         resetDelayFreq=0.03;
+%         resetStepAmp=0.01;
+%         resetDelayAmp=0.03;
+%     end
+    
     methods
         %% Connect
         function lockin = PSR830(address)

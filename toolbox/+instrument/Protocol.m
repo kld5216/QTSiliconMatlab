@@ -19,25 +19,19 @@ classdef Protocol < handle
             instr.address = address;
             switch address{1}
                 case 'VISA-GPIB'%VISA-GPIB协议 & keysight仪器 e.g.{'VISA-GPIB',1,10}
-                    add = ['GPIB' num2str(address{2}) '::' num2str(address{3}) '::INSTR'];
-                    instr.handle = instrfind('Type', 'visa-gpib', 'RsrcName', add, 'Tag', '');
+                    addr = ['GPIB' num2str(address{2}) '::' num2str(address{3}) '::INSTR'];
+                    instr.handle = instrfind('Type', 'visa-gpib', 'RsrcName', addr, 'Tag', '');
                     if isempty(instr.handle)
-                        instr.handle = instrfind('Type', 'visa-gpib', 'RsrcName', add, 'Tag', '');
-                    end
-                    if isempty(instr.handle)
-                        instr.handle = visa('AGILENT',add);
+                        instr.handle = visa('AGILENT',addr);
                     else
                         fclose(instr.handle);
                         instr.handle = instr.handle(1);
                     end
                 case 'VISA-TCPIP'%VISA-TCPIP协议 & keysight仪器 e.g.{'VISA-TCPIP','192.168.1.1'}
-                    add = ['TCPIP::' address{2} '::INSTR'];
-                    instr.handle = instrfind('Type', 'visa-tcpip', 'RsrcName', add, 'Tag', '');
+                    addr = ['TCPIP::' address{2} '::INSTR'];
+                    instr.handle = instrfind('Type', 'visa-tcpip', 'RsrcName', addr, 'Tag', '');
                     if isempty(instr.handle)
-                        instr.handle = instrfind('Type', 'visa-tcpip', 'RsrcName', add, 'Tag', '');
-                    end
-                    if isempty(instr.handle)
-                        instr.handle = visa('AGILENT', add);
+                        instr.handle = visa('AGILENT', addr);
                     else
                         fclose(instr.handle);
                         instr.handle = instr.handle(1);
@@ -61,7 +55,7 @@ classdef Protocol < handle
             end
         end
         
-        %% open / close / delete        
+        %% open / close / delete
         function open(instr)
             if strcmp(instr.handle.status,'closed')
                 fopen(instr.handle);
@@ -81,70 +75,23 @@ classdef Protocol < handle
         
         %% Command1 / Command2
         function result = Command1(instr,order)%需要fscanf读取handle内容时使用
-            if strcmp(instr.handle.status,'closed')
-                isopened = 0;
-                fopen(instr.handle);
-            else
-                isopened = 1;
-            end
-            success_flag = 0;
-            t = 0;
-            while ~success_flag
-                try
-                    success_flag = 1;
-                    fprintf(instr.handle,order);
-                catch exception
-                    if strcmp(exception.identifier, 'instrument:fprintf:opfailed')
-                        success_flag = 0;
-                        t = t + 1;
-                        if t < 10
-                            disp([datestr(now), ' : ', exception.message]);
-                            pause(2);
-                        else
-                            error([datestr(now), ' : ', exception.message]);
-                        end
-                    else
-                        rethrow(exception);
-                    end
+            try
+                fprintf(instr.handle,order);
+            catch exception
+                if strcmp(exception.identifier, 'instrument:fprintf:opfailed')
+                    error([datestr(now), ' : ', exception.message]);
                 end
             end
             result = fscanf(instr.handle);
-            if ~isopened
-                fclose(instr.handle);
-            end
-        end
-        
+        end        
         
         function Command2(instr,order)%不需要fscanf读取handle内容时使用
-            if strcmp(instr.handle.status, 'closed')
-                isopened = 0;
-                fopen(instr.handle);
-            else
-                isopened = 1;
-            end
-            success_flag = 0;
-            t = 0;
-            while ~success_flag
-                try
-                    success_flag = 1;
-                    fprintf(instr.handle,order);
-                catch exception
-                    if strcmp(exception.identifier, 'instrument:fprintf:opfailed')
-                        success_flag = 0;
-                        t = t + 1;
-                        if t < 10
-                            disp([datestr(now), ' : ', exception.message]);
-                            pause(2);
-                        else
-                            error([datestr(now), ' : ', exception.message]);
-                        end
-                    else
-                        rethrow(exception);
-                    end
+            try
+                fprintf(instr.handle,order);
+            catch exception
+                if strcmp(exception.identifier, 'instrument:fprintf:opfailed')
+                    error([datestr(now), ' : ', exception.message]);
                 end
-            end
-            if ~isopened
-                fclose(instr.handle);
             end
         end
     end

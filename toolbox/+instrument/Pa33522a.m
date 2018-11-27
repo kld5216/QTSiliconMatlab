@@ -8,6 +8,18 @@ classdef Pa33522a < instrument.Protocol
     %% Comments
     %   unit for freq / amp / period : Hz / V / s
     %   for arb , use func 'tool.arbTo33500'
+    %% properties
+    properties
+        steprfFreq=20;
+        delayrfFreq=0.1;
+        steprfPower=20;
+        delayrfPower=0.1;
+        
+        resetsteprfFreq=20;
+        resetdelayrfFreq=0.1;
+        resetsteprfPower=20;
+        resetdelayrfPower=0.1;
+    end
     
     methods
         %% Connect
