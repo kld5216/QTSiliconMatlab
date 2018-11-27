@@ -24,7 +24,6 @@ classdef Protocol < handle
                     if isempty(instr.handle)
                         instr.handle = visa('AGILENT',addr);
                     else
-                        fclose(instr.handle);
                         instr.handle = instr.handle(1);
                     end
                 case 'VISA-TCPIP'%VISA-TCPIP协议 & keysight仪器 e.g.{'VISA-TCPIP','192.168.1.1'}
@@ -33,7 +32,6 @@ classdef Protocol < handle
                     if isempty(instr.handle)
                         instr.handle = visa('AGILENT', addr);
                     else
-                        fclose(instr.handle);
                         instr.handle = instr.handle(1);
                     end
                 case 'GPIB'%GPIB协议 & keysight仪器 e.g.{'GPIB',7,10}
@@ -41,7 +39,6 @@ classdef Protocol < handle
                     if isempty(instr.handle)
                         instr.handle = gpib('AGILENT',address{2}, address{3});
                     else
-                        fclose(instr.handle);
                         instr.handle = instr.handle(1);
                     end
                 case 'TCPIP'%TCPIP协议 e.g.{'TCPIP','192.168.1.1',80}
@@ -49,10 +46,11 @@ classdef Protocol < handle
                     if isempty(instr.handle)
                         instr.handle = tcpip(address{2},address{3});
                     else
-                        fclose(instr.handle);
                         instr.handle = instr.handle(1);
                     end
             end
+            instr.open();
+            fclose(instr.handle);
         end
         
         %% open / close / delete
@@ -63,9 +61,7 @@ classdef Protocol < handle
         end
         
         function close(instr)
-            if strcmp(instr.handle.status,'open')
-                fclose(instr.handle);
-            end
+            fclose(instr.handle);
         end
         
         function delete(instr)
