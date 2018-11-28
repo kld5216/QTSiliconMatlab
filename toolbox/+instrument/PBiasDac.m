@@ -27,7 +27,7 @@ classdef PBiasDac< instrument.Protocol
                 otherwise
                     error('wrong channel');
             end
-            result = itek.Command1(order);
+            result = query(itek.handle,order);
             volt = str2double(result);
         end
         
@@ -41,7 +41,7 @@ classdef PBiasDac< instrument.Protocol
                 otherwise
                     error('wrong channel');
             end
-            itek.Command1(order);
+            query(itek.handle,order);
         end
     end
     

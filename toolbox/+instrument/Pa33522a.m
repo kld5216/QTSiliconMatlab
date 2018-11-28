@@ -9,17 +9,17 @@ classdef Pa33522a < instrument.Protocol
     %   unit for freq / amp / period : Hz / V / s
     %   for arb , use func 'tool.arbTo33500'
     %% properties
-    properties
-        steprfFreq=20;
-        delayrfFreq=0.1;
-        steprfPower=20;
-        delayrfPower=0.1;
-        
-        resetsteprfFreq=20;
-        resetdelayrfFreq=0.1;
-        resetsteprfPower=20;
-        resetdelayrfPower=0.1;
-    end
+%     properties
+%         steprfFreq=20;
+%         delayrfFreq=0.1;
+%         steprfPower=20;
+%         delayrfPower=0.1;
+%         
+%         resetsteprfFreq=20;
+%         resetdelayrfFreq=0.1;
+%         resetsteprfPower=20;
+%         resetdelayrfPower=0.1;
+%     end
     
     methods
         %% Connect
@@ -30,36 +30,36 @@ classdef Pa33522a < instrument.Protocol
         %% @read(channel)(freq / amp / period)
         function freq = read_freq(a33522a,channel)
             order = sprintf(':sour%d:freq?\n',channel);
-            result = a33522a.Command1(order);
+            result = query(a33522a.handle,order);
             freq = str2double(result);
         end
         
         function amp = read_amp(a33522a,channel)
             order = sprintf(':sour%d:volt?\n',channel);
-            result = a33522a.Command1(order);
+            result = query(a33522a.handle,order);
             amp = str2double(result);
         end
         
         function period = read_period(a33522a,channel)
             order = sprintf(':sour%d:func:squ:per?\n',channel);
-            result = a33522a.Command1(order);
+            result = query(a33522a.handle,order);
             period = str2double(result);
         end
         
         %% @set(channel,value)(freq / amp / period)
         function set_freq(a33522a,channel,value)%units Hz
             order = sprintf(':sour%d:freq %f\n',channel,value);
-            a33522a.Command2(order);
+            fprintf(a33522a.handle,order);
         end
         
         function set_amp(a33522a,channel,value)%units V
             order = sprintf(':sour%d:volt %f\n',channel,value);
-            a33522a.Command2(order);
+            fprintf(a33522a.handle,order);
         end
         
         function set_period(a33522a,channel,value)%units s
             order = sprintf(':sour%d:func:squ:per %f\n',channel,value);
-            a33522a.Command2(order);
+            fprintf(a33522a.handle,order);
         end
     end
     

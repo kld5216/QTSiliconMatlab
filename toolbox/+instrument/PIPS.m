@@ -28,7 +28,7 @@ classdef PIPS < instrument.Protocol%磁场的单位是mT
         
         function state = to_set(ips,channel)
             order = sprintf('SET:DEV:GRP%c:PSU:ACTN:RTOS\n',channel+87);
-            result = ips.Command1(order);
+            result = query(ips,order);
             if strcmp(result,sprintf('STAT:SET:DEV:GRP%c:PSU:ACTN:RTOS:VALID\n',channel+87))
                 state = 1;
             else
@@ -38,7 +38,7 @@ classdef PIPS < instrument.Protocol%磁场的单位是mT
         
         function state = to_zero(ips,channel)
             order = sprintf('SET:DEV:GRP%c:PSU:ACTN:RTOZ\n',channel+87);
-            result = ips.Command1(order);
+            result = query(ips,order);
             if strcmp(result,sprintf('STAT:SET:DEV:GRP%c:PSU:ACTN:RTOZ:VALID\n',channel+87))
                 state = 1;
             else
@@ -46,23 +46,30 @@ classdef PIPS < instrument.Protocol%磁场的单位是mT
             end
         end
         
-        %% @read(channel)(hold / heat /target_field / ramp_rate / field / persistent_field)
-        function state = read_hold(ips,channel)
+        %% @read(channel)(action / heatState /target_field / ramp_rate / field / persistent_field)
+        function state = read_action(ips,channel)
             order = sprintf('READ:DEV:GRP%c:PSU:ACTN\n',channel+87);
-            result = ips.Command1(order);
-            if ~strcmp(result,sprintf('STAT:DEV:GRP%c:PSU:ACTN:HOLD\n',channel+87))
-                state = 0;
-                return;
+            result = query(ips,order);
+            switch result(24:27)
+                case 'CLMP'
+                    state = 0;
+                case 'HOLD'
+                    state = 1;                
+                case 'ROTZ'
+                    state = 2;
+                case 'ROTS'
+                    state = 3;
+                otherwise
+                    error('PIPS:incorrectResponse','read State error');
             end
-            state = 1;
         end
         
-        function state = read_heat(ips,channel)
+        function state = read_heatState(ips,channel)
             order = sprintf('READ:DEV:GRP%c:PSU:SIG:SWHT',channel+87);
-            result = ips.Command1(order);
-            if strcmp(result,sprintf('STAT:DEV:GRP%c:PSU:SIG:SWHT:OFF\n',channel+87))
+            result = query(ips,order);
+            if strcmp(result(28:30),'OFF')
                 state = 0;
-            elseif strcmp(result,sprintf('STAT:DEV:GRP%c:PSU:SIG:SWHT:ON\n',channel+87))
+            elseif strcmp(result(28:29),'ON')
                 state = 1;
             else
                 state = -1;
@@ -72,29 +79,35 @@ classdef PIPS < instrument.Protocol%磁场的单位是mT
         function targetF = read_target_field(ips,channel)
             order = sprintf('READ:DEV:GRP%c:PSU:SIG:FSET\n',channel+87);
             result = ips.Command1(order);
-            targetF = str2double(result(28:33));
+            targetF = str2double(result(28:34));
             if isnan(targetF)
-                ips.close();
-                error('read target field error');
+                targetF = str2double(result(28:33));
+                if isnan(targetF)
+                    ips.close();
+                    error('read target field error');
+                end
             end
             targetF = targetF * 1000;
         end
         
         function rate = read_ramp_rate(ips,channel)
             order = sprintf('READ:DEV:GRP%c:PSU:SIG:RFST',channel+87);
-            result = ips.Command1(order);
-            rate = str2double(result(28:33));
-            while isnan(rate)
-                ips.close;
-                error('read ramp rate error');
+            result = query(ips,order);
+            rate = str2double(result(28:34));
+            if isnan(rate)
+                rate = str2double(result(28:33));
+                if isnan(rate)
+                    ips.close();
+                    error('read target field error');
+                end
             end
             rate = rate * 1000;
         end
         
         function field = read_field(ips,channel)
             order = sprintf('READ:DEV:GRP%c:PSU:SIG:FLD',channel+87);
-            result = ips.Command1(order);
-            field = str2double(result(27:32));
+            result = query(ips,order);
+            field = str2double(result(27:33));
             while isnan(field)
                 ips.close;
                 error('read field error');

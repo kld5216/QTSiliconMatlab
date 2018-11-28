@@ -69,27 +69,6 @@ classdef Protocol < handle
             delete(instr.handle);
         end
         
-        %% Command1 / Command2
-        function result = Command1(instr,order)%需要fscanf读取handle内容时使用
-            try
-                fprintf(instr.handle,order);
-            catch exception
-                if strcmp(exception.identifier, 'instrument:fprintf:opfailed')
-                    error([datestr(now), ' : ', exception.message]);
-                end
-            end
-            result = fscanf(instr.handle);
-        end        
-        
-        function Command2(instr,order)%不需要fscanf读取handle内容时使用
-            try
-                fprintf(instr.handle,order);
-            catch exception
-                if strcmp(exception.identifier, 'instrument:fprintf:opfailed')
-                    error([datestr(now), ' : ', exception.message]);
-                end
-            end
-        end
     end
 end
 
