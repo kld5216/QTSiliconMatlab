@@ -3,10 +3,11 @@ classdef instr_SR830<instrument.PSR830
     %完成每个操作句柄的类内编号以及命名
     properties
         %ch_name operate_type 三者为拓展类函数的必备要素
-        ch={};
-        ch_name={};
-        operate_type={};% 'read'/'set'/'both'/'ban' useless=ban
-
+        ch = {};
+        ch_name = {};
+        operate_type = {};% 'read'/'set'/'both'/'ban' useless=ban
+        step = {};
+        delay = {};
         stepAux = 0.03;
         delayAux = 0.05;
         stepAmp = 0.02;
@@ -35,8 +36,16 @@ classdef instr_SR830<instrument.PSR830
                 obj.stepFreq = str2double(regexp(fgetl(fd),'\d*\.?\d*','match','once'));
                 obj.delayFreq = str2double(regexp(fgetl(fd),'\d*\.?\d*','match','once'));
             catch exception
-                error(exception.identifier,exception.message);
+                warning(exception.identifier,'%s',exception.message);
             end
+            obj.step = {0,0,0,0,...
+                obj.stepAux,obj.stepAux,obj.stepAux,obj.stepAux,...
+                obj.stepAmp,...
+                obj.stepFreq};
+            obj.delay = {0,0,0,0,...
+                obj.delayAux,obj.delayAux,obj.delayAux,obj.delayAux,...
+                obj.delayAmp,...
+                obj.delayFreq};
         end
         
         %% 主功能函数
@@ -82,39 +91,61 @@ classdef instr_SR830<instrument.PSR830
                     error('instr_SR830:operate_check',['index ' num2str(idx) ' out of range!']);
             end
         end
-        %% 功能函数（基于SR830）
-        function out_put=SR830_read(obj,idx)
+        %% 功能函数（基于SR830）取得函数句柄
+        function out_put = SR830_read(obj,idx)
             switch idx
                 case 1 %I_x(read only)
-                    out_put=obj.read_current(1);
+                    out_put = @()obj.read_current(1);
                 case 2 %I_y(read only)
-                    out_put=obj.read_current(2);
+                    out_put = @()obj.read_current(2);
                 case 3 %Lockin_I(read only)
-                    out_put=obj.read_current(3);
+                    out_put = @()obj.read_current(3);
                 case 4 %Lockin_Theta(read only)
-                    out_put=obj.read_current(4);
+                    out_put = @()obj.read_current(4);
                 case 5 %Aux1
-                    out_put=obj.read_aux(1);
+                    out_put = @()obj.read_aux(1);
                 case 6 %Aux2
-                    out_put=obj.read_aux(2);
+                    out_put = @()obj.read_aux(2);
                 case 7 %Aux3
-                    out_put=obj.read_aux(3);
+                    out_put = @()obj.read_aux(3);
                 case 8 %Aux4
-                    out_put=obj.read_aux(4);
+                    out_put = @()obj.read_aux(4);
                 case 9 %Lockin_Freq
-                    out_put=obj.read_freq(0);
+                    out_put = @obj.read_freq;
                 case 10 %Lockin_Amp
-                    out_put=obj.read_amp(0);
+                    out_put = @obj.read_amp;
                 case 11 %sens
-                    out_put=obj.read_sens(0);
+                    out_put = @obj.read_sens;
             end
         end
         
-        function SR830_set(obj,idx,varargin)
+        function out_put = SR830_set(obj,idx)
+            switch idx
+                case 1 %I_x(read only)
+                case 2 %I_y(read only)
+                case 3 %Lockin_I(read only)
+                case 4 %Lockin_Theta(read only)
+                case 5 %Aux1
+                    out_put = @(value)obj.set_aux(1,value);
+                case 6 %Aux2
+                    out_put = @(value)obj.set_aux(2,value);
+                case 7 %Aux3
+                    out_put = @(value)obj.set_aux(3,value);
+                case 8 %Aux4
+                    out_put = @(value)obj.set_aux(4,value);
+                case 9 %Lockin_Freq
+                    out_put = @(value)obj.set_freq(0,value);
+                case 10 %Lockin_Amp
+                    out_put = @(value)obj.write_amp(0,value);
+                case 11 %sens
+                    out_put = @(value)obj.write_sens(0,value);
+            end
+        end
+        
+        function SR830_set_slow(obj,idx,varargin)
             % varargin='direct'
             %          无'direct'则可以设置：'step',默认step|大于0的浮点数/'delay',默认delay|大于0的浮点数
-            
-            %用于实现直接设置功能
+            %% 检索varargin合法性
             while ~isempty(varargin)
                 switch varargin{1}
                     case 'direct'
@@ -123,65 +154,39 @@ classdef instr_SR830<instrument.PSR830
                     case 'step'
                         if isempty(varargin{2})
                             error('instr_SR830:SR830_set','lack of index');
+                        elseif ~isfloat(varargin{2})||varargin{2} <= 0
+                            error('instr_SR830:SR830_set','step应为大于0的浮点数');
                         end
-                        change_step = varargin{2};
-                        
+                        obj.step{idx} = varargin{2};
+                        varargin(1:2) = [];
+                    case 'delay'
+                        if isempty(varargin{2})
+                            error('instr_SR830:SR830_set','lack of index');
+                        elseif ~isfloat(varargin{2})||varargin{2} <= 0
+                            error('instr_SR830:SR830_set','delay应为大于0的浮点数');
+                        end
+                        obj.delay{idx} = varargin{2};
+                        varargin(1:2) = [];
                 end
-            end
-%             else
-%                 str_error='wrong instr_SR830 operate ?direct?num?idx? !';
-%                 errordlg(str_error,'SR830_Error');
-            
-            if length(varargin) >= 3 && ~varargin{3}
-                change_step = varargin{3};
-            else
-                change_step =  0;
-            end
-            if length(varargin) >= 4 && ~varargin{4}
-                change_delay = varargin{4};
-            else
-                change_delay=0.1;
             end
             %% 更改电压
-            Now_value=obj.SR830_read(idx);
+            reader = obj.SR830_read(idx);
+            setter = obj.subset(idx);
+            Step = obj.step{idx};
+            Delay = obj.delay{idx};
+            Now_value = reader();
             if (Now_value~=value)
-                %                 obj.cheak_value(idx,value);
-                change_step=abs(change_step);
+                Step=abs(Step);
                 if (Now_value>value)
-                    change_step=-change_step;
+                    Step=-Step;
                 end
-                for i=Now_value:change_step:value
-                    obj.subset(idx,i);
-                    pause(change_delay);
+                for i=Now_value:Step:value
+                    setter(i);
+                    pause(Delay);
                 end
-                obj.subset(idx,value);
+                setter(value);
             end
-            out_put=1;
-        end
-        
-        function subset(obj,idx,value)
-            switch idx
-                case 1 %I_x(read only)
-                case 2 %I_y(read only)
-                case 3 %Lockin_I(read only)
-                case 4 %Lockin_Theta(read only)
-                case 5 %Aux1
-                    obj.write_aux(1,value);
-                case 6 %Aux2
-                    obj.write_aux(2,value);
-                case 7 %Aux3
-                    obj.write_aux(3,value);
-                case 8 %Aux4
-                    obj.write_aux(4,value);
-                case 9 %Lockin_Freq
-                    obj.write_freq(value);
-                case 10 %Lockin_Amp
-                    obj.write_amp(value);
-                case 11 %sens
-                    obj.write_sens(value);
-            end
-        end
-      
+        end        
     end
 end
 
