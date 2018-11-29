@@ -50,7 +50,6 @@ classdef Protocol < handle
                     end
             end
             instr.open();
-            fclose(instr.handle);
         end
         
         %% open / close / delete
@@ -65,7 +64,7 @@ classdef Protocol < handle
         end
         
         function delete(instr)
-            instr.close();
+            fclose(instr.handle);
             delete(instr.handle);
         end
         

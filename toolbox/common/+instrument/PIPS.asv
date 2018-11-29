@@ -11,8 +11,8 @@ classdef PIPS < instrument.Protocol%磁场的单位是mT
     %% Comments
     %   'channel + 87' represents 'X'/'Y'/'Z' for channel = 1/2/3 in ASCII
     %   it need 300 seconds to turn heater on/off
-    %   magnet unit is always mT
-    %   rate unit is always mT/min
+    %   magnet unit is always T
+    %   rate unit is always T/min
     
     %%
     properties(Constant=true)
@@ -78,107 +78,89 @@ classdef PIPS < instrument.Protocol%磁场的单位是mT
         
         function targetF = read_target_field(ips,channel)
             order = sprintf('READ:DEV:GRP%c:PSU:SIG:FSET\n',channel+87);
-            result = ips.Command1(order);
-            targetF = str2double(result(28:34));
+            result = query(ips,order);
+            targetF = str2double(regexp(result, '-?\d*\.?\d*', 'match'));
             if isnan(targetF)
-                targetF = str2double(result(28:33));
-                if isnan(targetF)
-                    ips.close();
-                    error('read target field error');
-                end
+                error('PIPS:incorrectResponse','read target field error');
             end
-            targetF = targetF * 1000;
         end
         
         function rate = read_ramp_rate(ips,channel)
             order = sprintf('READ:DEV:GRP%c:PSU:SIG:RFST',channel+87);
             result = query(ips,order);
-            rate = str2double(result(28:34));
+            rate = str2double(regexp(result, '-?\d*\.?\d*', 'match'));
             if isnan(rate)
-                rate = str2double(result(28:33));
-                if isnan(rate)
-                    ips.close();
-                    error('read target field error');
-                end
+                error('PIPS:incorrectResponse','read target field error');
             end
-            rate = rate * 1000;
         end
         
         function field = read_field(ips,channel)
             order = sprintf('READ:DEV:GRP%c:PSU:SIG:FLD',channel+87);
             result = query(ips,order);
-            field = str2double(result(27:33));
-            while isnan(field)
-                ips.close;
-                error('read field error');
+            field = str2double(regexp(result, '-?\d*\.?\d*', 'match'));
+            if isnan(field)
+                error('PIPS:incorrectResponse','read field error');
             end
-            field = field * 1000;
         end
         
         function field = read_persistent_field(ips,channel)
             order = sprintf('READ:DEV:GRP%c:PSU:SIG:PFLD',channel+87);
-            result = ips.Command1(order);
-            field = str2double(result(28:33));
-            while isnan(field)
-                ips.close;
-                error('read internal field error');
+            result = query(ips,order);
+            field = str2double(regexp(result, '-?\d*\.?\d*', 'match'));
+            if isnan(field)
+                error('PIPS:incorrectResponse','read internal field error');
             end
-            field = field * 1000;
         end
         
-        %% @set(channel,value)(hold / heat / target_field / ramp_rate / field)
+        %% @set(channel,value)(action / heat / target_field / ramp_rate)
         
-        function state = set_hold(ips,channel,value)
-            if value
-                key = 'HOLD';
-            else
+        function set_action(ips,channel,value)
+            switch value
+            case 0
                 key = 'CLMP';
+                case 1
+                    key = 'HOLD';
+                case 2
+                    key = 'ROTZ';
+                case 3
+                    key = 'ROTS';
             end
             order = sprintf('SET:DEV:GRP%c:PSU:ACTN:%s\n',channel+87,key);
-            result = ips.Command1(order);
-            if strcmp(result,sprintf('STAT:SET:DEV:GRP%c:PSU:ACTN:%s:VALID\n',channel+87,key))
-                state = 1;
-            else
-                state = 0;
+            result = query(ips,order);
+            if ~strcmp(result,sprintf('STAT:SET:DEV:GRP%c:PSU:ACTN:%s:VALID\n',channel+87,key))
+                error('PIPS:incorrectResponse','set %s state error',key);
             end
         end
         
-        function state = set_heat(ips,channel,value)
+        function set_heat(ips,channel,value)
             if value
                 key = 'ON';
             else
                 key = 'OFF';
             end
             order = sprintf('SET:DEV:GRP%c:PSU:SIG:SWHT:%s\n',channel+87,key);
-            result = ips.Command1(order);
-            if strcmp(result,sprintf('STAT:SET:DEV:GRP%c:PSU:SIG:SWHT:%s:VALID\n',channel+87,key))
-                state = 1;
-            else
-                state = 0;
+            result = query(ips,order);
+            if ~strcmp(result,sprintf('STAT:SET:DEV:GRP%c:PSU:SIG:SWHT:%s:VALID\n',channel+87,key))
+                error('PIPS:incorrectResponse','set heat %s state error',key);
             end
-            
         end
         
         function set_target_field(ips,channel,value)
-            rvalue = value/1000;
-            order = sprintf('SET:DEV:GRP%c:PSU:SIG:FSET:%.4f\n',channel+87,rvalue);
-            ips.Command1(order);
-            while abs(ips.read_target_field(channel) - value) >= 0.1
-                ips.close;
-                error('set target field error');
+            order = sprintf('SET:DEV:GRP%c:PSU:SIG:FSET:%.4f\n',channel+87,value);
+            query(ips,order);
+            if abs(ips.read_target_field(channel) - value) >= 0.001
+                error('PIPS:incorrectResponse','set target field error');
             end
         end
         
         function set_ramp_rate(ips,channel,value)
-            rrate = value/1000;
-            order = sprintf('SET:DEV:GRP%c:PSU:SIG:RFST:%.4f',channel+87,rrate);
-            ips.Command1(order);
-            while abs(ips.read_ramp_rate(channel)-value) >= 0.1
-                ips.close;
-                error('set ramp rate error');
+            order = sprintf('SET:DEV:GRP%c:PSU:SIG:RFST:%.4f',channel+87,value);
+            query(ips,order);
+            if abs(ips.read_ramp_rate(channel)-value) >= 0.001
+                error('PIPS:incorrectResponse','set ramp rate error');
             end
         end
-        
+        %% virtual gate
         function set_field(ips,channel,value)
             ips.open();
             ips.set_hold(channel,1);

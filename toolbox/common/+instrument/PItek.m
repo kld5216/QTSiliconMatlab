@@ -1,4 +1,4 @@
-classdef PBiasDac< instrument.Protocol
+classdef PItek< instrument.Protocol
     %% Abstract
     %   PBiasDac£ºitek
     %   transmission protocol: +instrument/Protocol
@@ -12,7 +12,7 @@ classdef PBiasDac< instrument.Protocol
     %%
     methods
         %% Connect
-        function itek = PBiasDac(address)
+        function itek = PItek(address)
             itek = itek@instrument.Protocol(address);
             itek.handle.Terminator=13;
         end
@@ -24,8 +24,6 @@ classdef PBiasDac< instrument.Protocol
                     order = sprintf('R%d\n',channel-1);
                 case {11,12,13,14,15,16}
                     order = sprintf('R%c\n',97+channel-11);
-                otherwise
-                    error('wrong channel');
             end
             result = query(itek.handle,order);
             volt = str2double(result);
@@ -38,8 +36,6 @@ classdef PBiasDac< instrument.Protocol
                     order = sprintf('S%d%g',channel-1,valuie);
                 case {11,12,13,14,15,16}
                     order = sprintf('S%c%g',97+channel-11,valuie);
-                otherwise
-                    error('wrong channel');
             end
             query(itek.handle,order);
         end

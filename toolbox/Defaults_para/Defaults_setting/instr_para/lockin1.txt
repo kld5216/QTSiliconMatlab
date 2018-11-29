@@ -1,0 +1,23 @@
+I_x Current1(X) read
+I_y Current1(Y) read
+R Current1(R) read
+Theta Current1(Theta) read
+Aux1 A1 both
+Aux2 A2 both
+Aux3 A3 both
+Aux4 A4 both
+freq Freq1 both
+AMP Amp1 both
+Sens - both
+stepAux=0.03;
+delayAux=0.05;
+stepAmp=0.02;
+delayAmp=0.03;
+stepFreq=10;
+delayFreq=0.03;
+resetStepAux=0.05;
+resetDelayAux=0.05;
+resetStepFreq=10;
+resetDelayFreq=0.03;
+resetStepAmp=0.01;
+resetDelayAmp=0.03;
