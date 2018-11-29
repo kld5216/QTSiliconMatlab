@@ -111,14 +111,21 @@ classdef instr_SR830<instrument.PSR830
         end
         
         function SR830_set(obj,idx,varargin)
-            % varargin='direct','off'(默认)|'on'
-            %          'direct'=='off'，则可以设置：'step',默认step|大于0的浮点数/'delay',默认delay|大于0的浮点数
+            % varargin='direct'
+            %          无'direct'则可以设置：'step',默认step|大于0的浮点数/'delay',默认delay|大于0的浮点数
             
             %用于实现直接设置功能
-            if strcmp(varargin{3},'direct')
-                if strcmp(varargin{3},'on')
-                    obj.subset(idx,value);
-                    return;
+            while ~isempty(varargin)
+                switch varargin{1}
+                    case 'direct'
+                        obj.subset(idx,value);
+                        break;
+                    case 'step'
+                        if isempty(varargin{2})
+                            error('instr_SR830:SR830_set','lack of index');
+                        end
+                        change_step = varargin{2};
+                        
                 end
             end
 %             else
