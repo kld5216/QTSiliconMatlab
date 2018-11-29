@@ -1,0 +1,11 @@
+I_x I_x ban
+I_y I_y ban
+R Lockin_I ban
+Theta Lockin_Theta ban
+Aux1 Aux1 both
+Aux2 Aux2 both
+Aux3 Aux3 both
+Aux4 Aux4 both
+freq Lockin_Freq ban
+AMP Lockin_AMP ban
+sens sens ban

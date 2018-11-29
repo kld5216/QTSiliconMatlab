@@ -1,0 +1,3 @@
+Line_Data1 Spectrum read
+Center_Frq Center_Frq set
+Frq_span Frq_span set

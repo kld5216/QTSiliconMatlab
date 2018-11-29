@@ -1,0 +1,11 @@
+state ENA_state ban
+probe_power Probe_power bam
+frq_start Frq_start ban
+frq_end Frq_end ban
+center_Frq Center_Frq ban
+center_Pow Center_Pow ban
+BandWidth BandWidth ban
+IFBW IFBW ban
+Line_Data3 Transmission read
+2_Data ScanPoint read
+Worktype Worktype ban

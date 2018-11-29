@@ -1,0 +1,64 @@
+classdef DSG3000 < instrument.CLAN
+    %CHP83732A 此处显示有关此类的摘要
+    %   此处显示详细说明
+    
+    properties
+        
+    end
+    
+    methods(Access = public)
+        function obj = DSG3000(address,varargin)
+            obj = obj@instrument.CLAN(address);
+            if(nargin==1)
+                obj.rst();
+                obj.outputON();
+            else
+                if(strcmp(varargin{1},'holdon'))
+
+                elseif(strcmp(varargin{1},'normal'))
+                    obj.rst();
+                    obj.outputON();
+                elseif(strcmp(varargin{1},'pulse'))
+                    obj.rst();
+                    fprintf(obj.instObj,':PULM:SOUR EXT');%选择调制源为外部脉冲
+                    fprintf(obj.instObj,':PULM:STAT ON');%打开脉冲调制开关
+                    fprintf(obj.instObj,':MOD:STAT ON');%打开调制输出
+                    obj.outputON();
+                else
+                    errorMsg('没有这个模式 尝试 : holdon normal pulse');
+                end
+            end
+        end
+        
+        function rst(obj)
+            fprintf(obj.instObj,'*RST');
+        end
+        
+        function outputON(obj)
+            fprintf(obj.instObj,':OUTP ON');
+        end
+        function outputOFF(obj)
+            fprintf(obj.instObj,':OUTP OFF');
+        end
+        function setFreq(obj,freq)
+            fprintf(obj.instObj,'FREQ %g',freq);
+        end
+        function setPower(obj,power)
+            fprintf(obj.instObj,'LEV %gdBm',power);
+        end
+        function setPhase(obj,phase)
+            %-720deg~720deg
+            fprintf(obj.instObj,':SOURce:PHASe %g',phase);
+        end
+        function delete(obj)
+            obj.outputOFF();
+            pause(0.1);
+            fclose(obj.instObj);
+        end
+    end
+    
+    methods(Access = protected)
+        
+    end
+    
+end
