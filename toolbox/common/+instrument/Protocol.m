@@ -2,8 +2,6 @@ classdef Protocol < handle
     %% Protocol
     %   连接仪器
     %   open、close、delete
-    %   Command1向仪器发送指令并接收返回值
-    %   Command2向仪器发送指令且不接收返回值
     %% Comment
     %   address格式为一维元胞，且address{1}固定为连接协议类型：VISA-GPIB、VISA-TCPIP、GPIB、TCPIP
     
