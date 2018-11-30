@@ -23,7 +23,8 @@ classdef instr_SR830<instrument.PSR830
             % 通过配置文件读取 e.g.:filepath = '.\Defaults_para\Defaults_setting\instr_para\SR830.txt'
             obj = obj@instrument.PSR830(address);
             fid = fopen(filepath);
-            for i = 1:app.num
+            disp(address);
+            for i = 1:obj.num
                 str = strsplit(fgetl(fid),' ');
                 obj.ch{i} = str{1};
                 obj.label{i} = str{2};
