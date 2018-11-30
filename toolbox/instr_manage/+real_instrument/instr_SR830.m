@@ -4,7 +4,7 @@ classdef instr_SR830<instrument.PSR830
     properties
         %ch_name operate_type 三者为拓展类函数的必备要素
         ch = {};
-        ch_name = {};
+        label = {};
         operate_type = {};% 'read'/'set'/'both'/'ban' useless=ban
         step = {};
         delay = {};
@@ -19,13 +19,13 @@ classdef instr_SR830<instrument.PSR830
     methods
         function obj = instr_SR830(address,filepath)
             %instrument_parameter配置SR830
-            % 通过配置文件读取 e.g.:filepath = '.\Defaults_para\Defaults_setting\instrument_parameter\SR830.txt'
+            % 通过配置文件读取 e.g.:filepath = '.\Defaults_para\Defaults_setting\instr_para\SR830.txt'
             obj = obj@instrument.PSR830(address);
             fid = fopen(filepath);
             for i = 1:11
                 str = strsplit(fgetl(fid),' ');
                 obj.ch{i} = str{1};
-                obj.ch_name{i} = str{2};
+                obj.label{i} = str{2};
                 obj.operate_type{i} = str{3};
             end
             try
@@ -49,19 +49,15 @@ classdef instr_SR830<instrument.PSR830
         end
         
         %% 主功能函数
-        function out_put= operate(obj,type,idx,varargin)
+        function out_put= operate(obj,type,idx)
             %operate('read',idx);
-            %operate('set',idx,value,('direct'/'step','delay'));
+            %operate('set',idx);
             obj.operate_check(type,idx);
-            if strcmp(type,'read')
-                out_put = obj.SR830_read(idx);
-            end
-            if strcmp(type,'set')
-                if ~isempty(varargin)
-                    out_put = obj.SR830_set(idx,varargin{:});
-                else
-                    error('instr_SR830:operate','number of set parameters not enough!');
-                end
+            switch type
+                case'read'
+                    out_put = obj.SR830_read(idx);
+                case'set'
+                    out_put = obj.SR830_set(idx);
             end
         end
           %% 操作是否被禁用
@@ -141,7 +137,7 @@ classdef instr_SR830<instrument.PSR830
                     out_put = @(value)obj.write_sens(0,value);
             end
         end
-        
+        %% 缓变设置
         function SR830_set_slow(obj,idx,varargin)
             % varargin='direct'
             %          无'direct'则可以设置：'step',默认step|大于0的浮点数/'delay',默认delay|大于0的浮点数
