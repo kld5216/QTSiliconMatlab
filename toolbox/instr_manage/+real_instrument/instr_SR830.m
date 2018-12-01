@@ -69,7 +69,7 @@ classdef instr_SR830<instrument.PSR830
                 error('instr_SR830:operate_check',['type of ' obj.ch{idx} ' is wrong!']);
             end
             switch idx
-                case {1:11}
+                case {1,2,3,4,5,6,7,8,9,10,11}
                     switch obj.operate_type{idx}
                         case 'ban'
                             error('instr_SR830:operate_check',[obj.ch{idx},' is ban!']);
