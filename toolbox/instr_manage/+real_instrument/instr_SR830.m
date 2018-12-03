@@ -23,7 +23,7 @@ classdef instr_SR830<instrument.PSR830
             % 通过配置文件读取 e.g.:filepath = '.\Defaults_para\Defaults_setting\instr_para\SR830.txt'
             obj = obj@instrument.PSR830(address);
             fid = fopen(filepath);
-            disp(address);
+%             disp(address);
             for i = 1:obj.num
                 str = strsplit(fgetl(fid),' ');
                 obj.ch{i} = str{1};
@@ -31,12 +31,12 @@ classdef instr_SR830<instrument.PSR830
                 obj.operate_type{i} = str{3};
             end
             try
-                obj.stepAux = str2double(regexp(fgetl(fd),'\d*\.?\d*','match','once'));
-                obj.delayAux = str2double(regexp(fgetl(fd),'\d*\.?\d*','match','once'));
-                obj.stepAmp = str2double(regexp(fgetl(fd),'\d*\.?\d*','match','once'));
-                obj.delayAmp = str2double(regexp(fgetl(fd),'\d*\.?\d*','match','once'));
-                obj.stepFreq = str2double(regexp(fgetl(fd),'\d*\.?\d*','match','once'));
-                obj.delayFreq = str2double(regexp(fgetl(fd),'\d*\.?\d*','match','once'));
+                obj.stepAux = str2double(regexp(fgetl(fid),'\d*\.?\d*','match','once'));
+                obj.delayAux = str2double(regexp(fgetl(fid),'\d*\.?\d*','match','once'));
+                obj.stepAmp = str2double(regexp(fgetl(fid),'\d*\.?\d*','match','once'));
+                obj.delayAmp = str2double(regexp(fgetl(fid),'\d*\.?\d*','match','once'));
+                obj.stepFreq = str2double(regexp(fgetl(fid),'\d*\.?\d*','match','once'));
+                obj.delayFreq = str2double(regexp(fgetl(fid),'\d*\.?\d*','match','once'));
             catch exception
                 warning(exception.identifier,'%s',exception.message);
             end
