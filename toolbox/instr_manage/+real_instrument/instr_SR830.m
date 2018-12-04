@@ -124,19 +124,19 @@ classdef instr_SR830<instrument.PSR830
                 case 3 %Lockin_I(read only)
                 case 4 %Lockin_Theta(read only)
                 case 5 %Aux1
-                    out_put = obj.set_aux(1,value);
+                    obj.set_aux(1,value);
                 case 6 %Aux2
-                    out_put = obj.set_aux(2,value);
+                    obj.set_aux(2,value);
                 case 7 %Aux3
-                    out_put = obj.set_aux(3,value);
+                    obj.set_aux(3,value);
                 case 8 %Aux4
-                    out_put = obj.set_aux(4,value);
+                    obj.set_aux(4,value);
                 case 9 %Lockin_Freq
-                    out_put = obj.set_freq(0,value);
+                    obj.set_freq(0,value);
                 case 10 %Lockin_Amp
-                    out_put = obj.write_amp(0,value);
+                    obj.write_amp(0,value);
                 case 11 %sens
-                    out_put = obj.write_sens(0,value);
+                    obj.write_sens(0,value);
             end
         end
         %% »º±äÉèÖÃ
