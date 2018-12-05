@@ -117,7 +117,7 @@ classdef instr_SR830<instrument.PSR830
             end
         end
         
-        function out_put = set(obj,idx,value)
+        function set(obj,idx,value)
             switch idx
                 case 1 %I_x(read only)
                 case 2 %I_y(read only)
@@ -140,7 +140,7 @@ classdef instr_SR830<instrument.PSR830
             end
         end
         %% 缓变设置
-        function SR830_set_slow(obj,idx,varargin)
+        function set_slow(obj,idx,varargin)
             % varargin='direct'
             %          无'direct'则可以设置：'step',默认step|大于0的浮点数/'delay',默认delay|大于0的浮点数
             %% 检索varargin合法性

@@ -22,7 +22,7 @@ classdef PSR830 < instrument.Protocol
         end
         
         %% @read(channel)(current / aux / freq / amp / input_mode / sens)
-        function I_read=  read_current(lockin,channel)% X:1 Y:2 R:3 Theta:4
+        function I_read = read_current(lockin,channel)% X:1 Y:2 R:3 Theta:4
             order = sprintf('OUTP ? %d\n',channel);
             result = query(lockin.handle,order);
             I_read = str2double(result);

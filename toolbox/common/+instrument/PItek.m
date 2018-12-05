@@ -30,12 +30,12 @@ classdef PItek< instrument.Protocol
         end
         
         %% @set(channel,value)(volt)
-        function set_volt(itek,channel,valuie)
+        function set_volt(itek,channel,value)
             switch channel
                 case{1,2,3,4,5,6,7,8,9,10}
-                    order = sprintf('S%d%g',channel-1,valuie);
+                    order = sprintf('S%d%g',channel-1,value);
                 case {11,12,13,14,15,16}
-                    order = sprintf('S%c%g',97+channel-11,valuie);
+                    order = sprintf('S%c%g',97+channel-11,value);
             end
             query(itek.handle,order);
         end
