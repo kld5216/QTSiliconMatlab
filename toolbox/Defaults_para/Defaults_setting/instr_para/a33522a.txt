@@ -1,0 +1,12 @@
+SquareFreq SquareFreq1 both
+SquareAmp SquareAmp1 both
+SquarePeriod SquarePeriod1 both
+SquareFreq SquareFreq2 both
+SquareAmp SquareAmp2 both
+SquarePeriod SquarePeriod2 both
+SquareFreqStep=100
+SquareFreqDelay=0.2
+SquareAmpStep=0.005
+SquareAmpDelay=0.3
+SquarePerStep=0.1
+SquarePerDelay=0.3

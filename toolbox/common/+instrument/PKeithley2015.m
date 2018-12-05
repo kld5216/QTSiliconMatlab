@@ -3,7 +3,7 @@ classdef PKeithley2015 < instrument.Protocol
     %   PKeithley2015£ºdmm
     %   transmission protocol: +instrument/Protocol
     %% Index
-    %   @read
+    %   @read_current
     %   @set(~,channel)(channel)
     %% Comments
     %   channel range: 1~2
@@ -17,7 +17,7 @@ classdef PKeithley2015 < instrument.Protocol
         end
 
         %% @read
-        function value = read(dmm,~)
+        function value = read_current(dmm,~)
             order = sprintf('Read?\n');
             result = query(dmm.handle,order);
             value=str2double(result);

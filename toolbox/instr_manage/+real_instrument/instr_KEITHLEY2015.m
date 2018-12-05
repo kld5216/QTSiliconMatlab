@@ -45,7 +45,7 @@ classdef instr_KEITHLEY2015<instrument.PKeithley2015
                 error('instr_KEITHLEY2015:operate_check',['type of ' obj.ch{idx} ' is wrong!']);
             end
             switch idx
-                case {1,2,3,4,5,6,7,8,9,10,11}
+                case {1,2}
                     switch obj.operate_type{idx}
                         case 'ban'
                             error('instr_KEITHLEY2015:operate_check',[obj.ch{idx},' is ban!']);
@@ -68,7 +68,7 @@ classdef instr_KEITHLEY2015<instrument.PKeithley2015
         %% 功能函数（基于ITEK）取得函数句柄
         function out_put = read(obj,idx)
             obj.set_channel(idx);
-            out_put = obj.read();
+            out_put = obj.read_current();
         end  
     end
 end

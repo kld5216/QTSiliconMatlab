@@ -57,7 +57,7 @@ classdef instr_ITEK<instrument.PItek
                 error('instr_ITEK:operate_check',['type of ' obj.ch{idx} ' is wrong!']);
             end
             switch idx
-                case {1,2,3,4,5,6,7,8,9,10,11}
+                case {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16}
                     switch obj.operate_type{idx}
                         case 'ban'
                             error('instr_ITEK:operate_check',[obj.ch{idx},' is ban!']);

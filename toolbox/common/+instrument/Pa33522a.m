@@ -49,7 +49,6 @@ classdef Pa33522a < instrument.Protocol
             order = sprintf(':sour%d:func:squ:per %f\n',channel,value);
             fprintf(a33522a.handle,order);
         end
-    end
-    
+    end    
 end
 
