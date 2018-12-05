@@ -147,7 +147,7 @@ classdef instr_SR830<instrument.PSR830
             while ~isempty(varargin)
                 switch varargin{1}
                     case 'direct'
-                        obj.subset(idx,value);
+                        obj.set(idx,value);
                         break;
                     case 'step'
                         if isempty(varargin{2})
@@ -170,17 +170,17 @@ classdef instr_SR830<instrument.PSR830
             %% ¸ü¸ÄµçÑ¹
             Step = obj.step{idx};
             Delay = obj.delay{idx};
-            Now_value = obj.SR830_read(idx);
-            if (Now_value~=value)
-                Step=abs(Step);
-                if (Now_value>value)
-                    Step=-Step;
+            Now_value = obj.read(idx);
+            if Now_value ~= value
+                Step = abs(Step);
+                if Now_value > value
+                    Step = -Step;
                 end
-                for i=Now_value:Step:value
-                    obj.SR830_set(idx,i);
+                for i = Now_value:Step:value
+                    obj.set(idx,i);
                     pause(Delay);
                 end
-                obj.SR830_set(idx,value);
+                obj.set(idx,value);
             end
         end        
     end

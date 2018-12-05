@@ -19,14 +19,14 @@ classdef PKeithley2015 < instrument.Protocol
         %% @read
         function value = read(dmm,~)
             order = sprintf('Read?\n');
-            result = dmm.Command1(order);
+            result = query(dmm.handle,order);
             value=str2double(result);
         end
         
         %% @set(~,channel)(channel)
         function set_channel(dmm,~,channel)
             order = sprintf('rout:term fron%d\n',channel);
-            dmm.Command2(order);
+            fprintf(dmm.handle,order);
         end
     end
     

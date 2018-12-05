@@ -1,0 +1,18 @@
+Aux1 U1 both
+Aux2 U2 both
+Aux3 U3 both
+Aux4 U4 both
+Aux5 U5 both
+Aux6 U6 both
+Aux7 U7 both
+Aux8 U8 both
+Aux9 U9 both
+Aux10 U10 both
+Aux11 U11 both
+Aux12 U12 both
+Aux13 U13 both
+Aux14 U14 both
+Aux15 U15 both
+Aux16 U16 both
+stepAux=0.03;
+delayAux=0.05;
