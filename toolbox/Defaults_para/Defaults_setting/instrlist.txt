@@ -1,2 +1,2 @@
-lockin1 lockin1.txt GPIB,7,10 instr_SR830 real
-lockin2 lockin2.txt GPIB,7,11 instr_SR830 real
+lockin1 lockin1.txt GPIB,7,10 instr_SR830 real 1
+lockin2 lockin2.txt GPIB,7,11 instr_SR830 real 1
