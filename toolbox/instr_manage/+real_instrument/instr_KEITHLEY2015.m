@@ -33,9 +33,9 @@ classdef instr_KEITHLEY2015<instrument.PKeithley2015
             obj.operate_check(type,idx);
             switch type
                 case'read'
-                    out_put = @()obj.read(idx);
+                    out_put = @()obj.read_current();
                 case'set'
-                    out_put = @(value)obj.set(idx,value);
+                    out_put = 0;
             end
         end
           %% 操作是否被禁用
@@ -64,12 +64,7 @@ classdef instr_KEITHLEY2015<instrument.PKeithley2015
                 otherwise
                     error('instr_KEITHLEY2015:operate_check',['index ' num2str(idx) ' out of range!']);
             end
-        end
-        %% 功能函数（基于ITEK）取得函数句柄
-        function out_put = read(obj,idx)
-            obj.set_channel(idx);
-            out_put = obj.read_current();
-        end  
+        end       
     end
 end
 
