@@ -20,10 +20,6 @@ classdef PSR830 < instrument.Protocol
         function lockin = PSR830(address)
             lockin = lockin@instrument.Protocol(address);
         end
-        function delete(instr)
-            fclose(instr.handle);
-            delete(instr.handle);
-        end
         %% @read(channel)(current / aux / freq / amp / input_mode / sens)
         function I_read = read_current(lockin,channel)% X:1 Y:2 R:3 Theta:4
             order = sprintf('OUTP ? %d\n',channel);

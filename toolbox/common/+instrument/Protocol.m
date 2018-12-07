@@ -7,8 +7,8 @@ classdef Protocol < handle
     
     %% 以下为正文
     properties(Access = public)
-        handle;
-        address;
+        handle
+        address
     end
     
     methods
@@ -22,6 +22,7 @@ classdef Protocol < handle
                     if isempty(instr.handle)
                         instr.handle = visa('AGILENT',addr);
                     else
+                        fclose(instr.handle);
                         instr.handle = instr.handle(1);
                     end
                 case 'VISA-TCPIP'%VISA-TCPIP协议 & keysight仪器 e.g.{'VISA-TCPIP','192.168.1.1'}
@@ -30,6 +31,7 @@ classdef Protocol < handle
                     if isempty(instr.handle)
                         instr.handle = visa('AGILENT', addr);
                     else
+                        fclose(instr.handle);
                         instr.handle = instr.handle(1);
                     end
                 case 'GPIB'%GPIB协议 & keysight仪器 e.g.{'GPIB',7,10}
@@ -37,6 +39,7 @@ classdef Protocol < handle
                     if isempty(instr.handle)
                         instr.handle = gpib('AGILENT',address{2}, address{3});
                     else
+                        fclose(instr.handle);
                         instr.handle = instr.handle(1);
                     end
                 case 'TCPIP'%TCPIP协议 e.g.{'TCPIP','192.168.1.1',80}
@@ -44,21 +47,12 @@ classdef Protocol < handle
                     if isempty(instr.handle)
                         instr.handle = tcpip(address{2},address{3});
                     else
+                        fclose(instr.handle);
                         instr.handle = instr.handle(1);
                     end
             end
-            instr.open();
-        end
-        
-        %% open / close / delete
-        function open(instr)
-            if strcmp(instr.handle.status,'closed')
-                fopen(instr.handle);
-            end
-        end        
-        function close(instr)
-            fclose(instr.handle);
-        end        
+            fopen(instr.handle);
+        end           
     end
 end
 

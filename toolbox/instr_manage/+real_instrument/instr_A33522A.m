@@ -3,6 +3,7 @@ classdef instr_A33522A<instrument.Pa33522a
     %完成每个操作句柄的类内编号以及命名
     properties
         %ch_name operate_type 三者为拓展类函数的必备要素
+        name;
         num = 6;
         ch = {};
         label = {};
@@ -18,10 +19,11 @@ classdef instr_A33522A<instrument.Pa33522a
     end
         
     methods
-        function obj = instr_A33522A(address,filepath)
+        function obj = instr_A33522A(name,address,filepath)
             %instrument_parameter配置SR830
             % 通过配置文件读取 e.g.:filepath = '.\Defaults_para\Defaults_setting\instr_para\SR830.txt'
             obj = obj@instrument.Pa33522a(address);
+            obj.name = name;
             fid = fopen(filepath);
 %             disp(address);
             for i = 1:obj.num

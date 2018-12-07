@@ -3,6 +3,7 @@ classdef instr_KEITHLEY2015<instrument.PKeithley2015
     %完成每个操作句柄的类内编号以及命名
     properties
         %ch_name operate_type 三者为拓展类函数的必备要素
+        name;
         num = 1;
         ch = {};
         label = {};
@@ -12,10 +13,11 @@ classdef instr_KEITHLEY2015<instrument.PKeithley2015
     end
         
     methods
-        function obj = instr_KEITHLEY2015(address,filepath)
+        function obj = instr_KEITHLEY2015(name,address,filepath)
             %instrument_parameter配置ITEK
             % 通过配置文件读取 e.g.:filepath = '.\Defaults_para\Defaults_setting\instr_para\ITEK.txt'
             obj = obj@instrument.PKeithley2015(address);
+            obj.name = name;
             fid = fopen(filepath);
 %             disp(address);
             for i = 1:obj.num
