@@ -55,17 +55,10 @@ classdef Protocol < handle
             if strcmp(instr.handle.status,'closed')
                 fopen(instr.handle);
             end
-        end
-        
+        end        
         function close(instr)
             fclose(instr.handle);
-        end
-        
-        function delete(instr)
-            fclose(instr.handle);
-            delete(instr.handle);
-        end
-        
+        end        
     end
 end
 
