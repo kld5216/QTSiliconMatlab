@@ -13,11 +13,17 @@ for i = 1:size(InstrInFile,1)
         case {'VISA-GPIB','GPIB'}
             address{2} = str2double(address{2});
     end
-    address{3} = str2double(address{3});
+    if ~isempty(address{3})
+        address{3} = str2double(address{3});
+    end
     switch InstrInFile{i,5}
         case 'real'
             if strcmp(InstrInFile{i,6},'1')
-                instrlist{i} = eval([InstrInFile{i,4} '(InstrInFile{i,1},address,''.\Defaults_para\Defaults_setting\instr_para\' InstrInFile{i,2} ''')']);
+                try
+                    instrlist{i} = eval([InstrInFile{i,4} '(InstrInFile{i,1},address,''.\Defaults_para\Defaults_setting\instr_para\' InstrInFile{i,2} ''')']);
+                catch
+                    InstrInFile{i,6} = '0';
+                end
             else
                 idx = [idx i];
             end
@@ -26,6 +32,9 @@ end
 if ~isempty(idx)
     instrlist(idx) = [];
 end
+
+end
+
 
 
 
