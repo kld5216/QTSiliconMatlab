@@ -16,12 +16,12 @@ classdef slope_scan<handle
         function obj = slope_scan(name,varargin)
             %instrument_parameterÅäÖÃITEK
             obj.name = name;
-            while isempty(varargin)
-                obj.instr{length(instr)+1} = varargin{1};
-                obj.ch{length(ch)+1} = varargin{2};
+            while ~isempty(varargin)
+                obj.instr{length(obj.instr)+1} = varargin{1};
+                obj.ch{length(obj.ch)+1} = varargin{2};
                 varargin(1:2) = [];
             end
-            obj.label = obj.instr{1}.label;
+            obj.label = obj.instr{1}.label(obj.ch{1});
             obj.operate_type = obj.instr{1}.operate_type{obj.ch{1}};
         end
         

@@ -2,6 +2,7 @@ function instrlist = management()
 %UNTITLED8 此处显示有关此函数的摘要
 %   此处显示详细说明
 import real_instrument.*
+import virual_instrument.*
 import instrument.*
 idx = [];
 InstrInFile = readtable('.\Defaults_para\Defaults_setting\instrlist.txt','Format','%s%s%s%s%s%s','Delimiter','space','ReadVariableNames',0);
@@ -32,7 +33,7 @@ for i = 1:size(InstrInFile,1)
                 para = {};
                 instr = strsplit(InstrInFile{i,3},',');
                 while ~isempty(instr)
-                    para{length(para)+1} = instrlist{instr{1}}; 
+                    para{length(para)+1} = instrlist{str2double(instr{1})}; 
                     para{length(para)+1} = str2double(instr{2});
                     instr(1:2) = [];
                 end
