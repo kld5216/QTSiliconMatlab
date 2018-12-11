@@ -1,5 +1,5 @@
 lockin1 lockin1.txt GPIB,7,10 instr_SR830 real 1
-lockin2 lockin2.txt GPIB,7,11 instr_SR830 real 1
+lockin2 lockin2.txt GPIB,7,11 instr_SR830 real 0
 itek itek.txt TCPIP,192.168.1.141,5000 instr_ITEK real 0
 dmm dmm.txt VISA-GPIB,1,1 instr_KEITHLEY2015 real 0
 ips ips.txt TCPIP,192.168.1.115,7020 instr_IPS real 0
