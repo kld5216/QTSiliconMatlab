@@ -10,6 +10,8 @@ classdef slope_scan<handle
         %以下为局域变量
         instr = {};
         channel = {};
+        step = {};
+        delay = {};
         slope = 1;
         from = 0;
     end
@@ -26,15 +28,23 @@ classdef slope_scan<handle
             obj.ch = obj.instr{1}.ch(obj.channel{1});
             obj.label = obj.instr{1}.label(obj.channel{1});
             obj.operate_type = obj.instr{1}.operate_type(obj.channel{1});
+            obj.step = obj.instr{1}.step(obj.channel{1});
+            obj.delay = obj.instr{1}.delay(obj.channel{1});
         end
         
         %% 主功能函数
-        function out_put = operate(obj,~,~)
-            out_put = @(value)obj.set(value);
+        function out_put = operate(obj,type,~)
+            switch type
+                case 'set'
+                    out_put = @(value)obj.set(value);
+                case 'read'
+                    out_put = @()obj.instr{1}.read(obj.channel{1});
+            end
         end
         function set(obj,value)
-            obj.instr{1}.set(obj.ch{1},value);
-            obj.instr{2}.set(obj.ch{2},obj.from+obj.slope*value);
+            obj.instr{1}.set(obj.channel{1},value);
+            pause(obj.delay{1});
+            obj.instr{2}.set(obj.channel{2},obj.from+obj.slope*value);
         end
     end
 end

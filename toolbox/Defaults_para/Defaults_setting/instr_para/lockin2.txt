@@ -8,7 +8,7 @@ Aux3 B3 both
 Aux4 B4 both
 freq Freq2 both
 AMP Amp2 both
-Sens - both
+Sens Sens both
 stepAux 0.03
 delayAux 0.05
 stepAmp 0.02
