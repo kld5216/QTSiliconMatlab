@@ -8,7 +8,7 @@ function T1Pulse(t_empty,t_charge,t_read,Vpp1,Vpp2,V_amp)
 %   t_read : read时间   
 
 name = 'T1test';%波形文件名称
-IP = '192.168.1.115';%a33522a IP地址
+IP = '192.168.1.116';%a33522a IP地址
 sRate = 100e3;%awg33522a采样率
 
 %% 生成波形
@@ -21,11 +21,12 @@ totalpoints = sRate * (t_empty + t_charge + t_read) / 1000;
 arb = zeros(1,totalpoints);
 %     file = CFile(sprintf('E:\\people\\HRZ\\data\\T1\\test1\\%d\\',i));
 for j = 1:3
-    for i = sRate * point{j}(1) + 1:sRate * point{j+1}(1)
+    for i = sRate * point{j}(1) + 1:1:sRate * point{j+1}(1)
+        i = round(i);
         arb(i) = point{j}(2);
     end
 end
 
-tool.arbTo33500(arb,IP,V_amp,sRate,name);
+virual_instrument.arbTo33500(arb,IP,V_amp,sRate,name,sRate*point{3}(1)-10);
 pause(1);
 end

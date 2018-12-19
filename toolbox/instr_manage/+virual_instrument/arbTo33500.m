@@ -1,4 +1,4 @@
-function arbTo33500(arb,IP,amp,sRate,name)
+function arbTo33500(arb,IP,amp,sRate,name,mark_point)
 %This function connects to a 33500A/B waveform generator and sends it an
 %arbitrary waveform from Matlab via LAN. The input arguments are as
 %follows:
@@ -36,7 +36,7 @@ mes = ['Connected to ' idn ' sending waveforms.....'];
 h = waitbar(0,mes);
 
 %Reset instrument
-fprintf (fgen, '*RST');
+% fprintf (fgen, '*RST');
 
 %make sure waveform data is in column vector
 if isrow(arb) == 0
@@ -60,18 +60,7 @@ arbBytes=num2str(length(arb) * 4); %# of bytes
 header= ['SOURce1:DATA:ARBitrary ' name ', #' num2str(length(arbBytes)) arbBytes]; %create header
 binblockBytes = typecast(arb, 'uint8');  %convert datapoints to binary before sending
 fwrite(fgen, [header binblockBytes], 'uint8'); %combine header and datapoints then send to instrument
-fprintf(fgen, '*WAI');   %Make sure no other commands are exectued until arb is done downloadin
-
-fprintf(fgen, 'SOURce2:DATA:VOLatile:CLEar'); %Clear volatile memory
-fprintf(fgen, 'FORM:BORD SWAP');  %configure the box to correctly accept the binary arb points
-arbBytes=num2str(length(arb) * 4); %# of bytes
-header= ['SOURce2:DATA:ARBitrary ' name ', #' num2str(length(arbBytes)) arbBytes]; %create header
-binblockBytes = typecast(arb, 'uint8');  %convert datapoints to binary before sending
-fwrite(fgen, [header binblockBytes], 'uint8'); %combine header and datapoints then send to instrument
-fprintf(fgen, '*WAI');   %Make sure no other commands are exectued until arb is done downloadin
-
-
-
+fprintf(fgen, '*WAI');   %Make sure no other commands are exectued until arb is done downloading
 
 %update waitbar
 waitbar(.8,h,mes);
@@ -83,37 +72,20 @@ command = ['MMEM:STOR:DATA1 "INT:\' name '.arb"'];
 %fprintf(fgen,'MMEM:STOR:DATA1 "INT:\GPETE.arb"');%store arb in intermal NV memory
 fprintf(fgen,command);
 
-command = ['SOURce2:FUNCtion:ARBitrary ' name];
-%fprintf(fgen,'SOURce1:FUNCtion:ARBitrary GPETE'); % set current arb waveform to defined arb testrise
-fprintf(fgen,command); % set current arb waveform to defined arb testrise
-
-
-
 %update waitbar
 waitbar(.9,h,mes);
 command = ['SOURCE1:FUNCtion:ARB:SRATe ' num2str(sRate)]; %create sample rate command
 fprintf(fgen,command);%set sample rate
 fprintf(fgen,'SOURce1:FUNCtion ARB'); % turn on arb function
 
-
-command = ['SOURCE2:FUNCtion:ARB:SRATe ' num2str(sRate)]; %create sample rate command
-fprintf(fgen,command);%set sample rate
-fprintf(fgen,'SOURce2:FUNCtion ARB'); % turn on arb function
-
-
-
+fprintf(fgen,'OUTPut:SYNC:MODE MARKer');% set sync mode: marker
+command = ['SOURce:MARKer:POINt ' num2str(mark_point)];% set sync marker point
+fprintf(fgen,command);
 
 command = ['SOURCE1:VOLT ' num2str(amp)]; %create amplitude command
 fprintf(fgen,command); %send amplitude command
 fprintf(fgen,'SOURCE1:VOLT:OFFSET 0'); % set offset to 0 V
 fprintf(fgen,'OUTPUT1 ON'); %Enable Output for channel 1
-
-command = ['SOURCE2:VOLT ' num2str(1)]; %create amplitude command
-fprintf(fgen,command); %send amplitude command
-fprintf(fgen,'SOURCE2:VOLT:OFFSET 0'); % set offset to 0 V
-fprintf(fgen,'OUTPUT2 ON'); %Enable Output for channel 2
-
-
 
 fprintf('Arb waveform downloaded to channel 1\n\n') %print waveform has been downloaded
 
